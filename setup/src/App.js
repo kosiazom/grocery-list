@@ -3,7 +3,35 @@ import List from './List'
 import Alert from './Alert'
 
 function App() {
-  return <h2>grocery bud setup</h2>
+  const [name, setName] = useState("");
+  const [list, setList] = useState([]);
+  const [isEditing, stIsEditing] = useState(false);
+  const [editID, setEditId] = useState(null);
+  const [alert, setAlert] = useState({show: false, msg: '', type: ''})
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("i was hit!")
+  }
+
+  return <section className="section-center">
+    <form className="grocery-form" onSubmit={handleSubmit}>
+      {alert.show && <Alert />}
+      <h3>grocery bud</h3>
+      <div className='form-control'>
+        <input type="text" className='grocery' placeholder="e.g. bananas"/>
+        <button type="submit" className='submit-btn'>
+          {isEditing ? "edit"  : "Submit"}
+        </button>
+      </div>
+    </form>
+    <div className="grocery-container">
+      <List />
+      <button className="clear-btn">
+        clear items
+      </button>
+    </div>
+  </section>
 }
 
 export default App
