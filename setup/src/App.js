@@ -5,7 +5,7 @@ import Alert from './Alert'
 function App() {
   const [name, setName] = useState("");
   const [list, setList] = useState([]);
-  const [isEditing, stIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [editID, setEditId] = useState(null);
   const [alert, setAlert] = useState({
       show: false,
@@ -24,10 +24,19 @@ function App() {
     showAlert(true, "danger", "please enter value")
 
    } else if( name && isEditing ){
-
+    setList(list.map((item) => {
+      if(item.id === editID) {
+        return {...item, title:name}
+      }
+      return item
+    }))
+    //reset everything back to default
+    setName("");
+    setEditId(null);
+    setIsEditing(false);
    } //if there is something in the value and isEditting is true then display alerts
    else {
-     //show alert
+     showAlert(true, 'success', 'item added to the list!')
      const newItem = {id: new Date(). getTime().toString(), title: name};
      setList([...list, newItem]);
      setName('') // this clears the form
@@ -37,6 +46,24 @@ function App() {
   const showAlert = (show=false, type="", msg="") => {
     setAlert({ show, type, msg })
 
+  }
+
+  const clearList = () => {
+    showAlert(true, 'danger', 'empty list')
+    setList([])
+  }
+
+  const removeItem =(id) => {
+    showAlert(true, 'danger', 'item removed')
+    setList(list.filter(item => item.id !== id))
+  }
+
+  const editItem = (id) => {
+    const specificItem = list.find((item) => item.id === id );
+    console.log(specificItem.title)
+    setIsEditing(true);
+    setEditId(id)
+    setName(specificItem.title) //this is paste the name into the input form 
   }
 
   return <section className="section-center">
@@ -57,8 +84,12 @@ function App() {
     {list.length > 0 && (
 
     <div className="grocery-container">
-      <List  items={list}/>
-      <button className="clear-btn">
+      <List  items={list} 
+             removeItem={removeItem}
+             editItem={editItem}/>
+      <button className="clear-btn" 
+              onClick={() => clearList()} 
+              >
         clear items
       </button>
     </div>
