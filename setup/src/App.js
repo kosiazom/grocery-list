@@ -2,9 +2,22 @@ import React, { useState, useEffect } from 'react'
 import List from './List'
 import Alert from './Alert'
 
+
+const getLocalStorage = () => {
+  let list = localStorage.getItem('list');
+  //getItem( ) will return the keys value or null if the key does not exist
+  if(list) {
+    return JSON.parse(localStorage.getItem('list'))
+  }
+  else {
+    return []
+  }
+}
+
 function App() {
   const [name, setName] = useState("");
-  const [list, setList] = useState([]);
+  // const [list, setList] = useState([]);
+  const [list, setList] = useState(getLocalStorage());
   const [isEditing, setIsEditing] = useState(false);
   const [editID, setEditId] = useState(null);
   const [alert, setAlert] = useState({
@@ -34,12 +47,14 @@ function App() {
     setName("");
     setEditId(null);
     setIsEditing(false);
+    showAlert(true, 'success', "value changed!")
    } //if there is something in the value and isEditting is true then display alerts
    else {
      showAlert(true, 'success', 'item added to the list!')
-     const newItem = {id: new Date(). getTime().toString(), title: name};
+     const newItem = {id: new Date().getTime().toString(), title: name};
      setList([...list, newItem]);
      setName('') // this clears the form
+    
    }
   }
 // this function below is ES6 and th arguments can take p
@@ -65,6 +80,14 @@ function App() {
     setEditId(id)
     setName(specificItem.title) //this is paste the name into the input form 
   }
+
+
+  useEffect(() => {
+    localStorage.setItem("list", JSON.stringify(list)) //setitem is a method for localStorage takes a key and value pair
+     // return () => {
+     //   cleanup
+     // }
+   }, [list])
 
   return <section className="section-center">
     <form className="grocery-form" onSubmit={handleSubmit}>
